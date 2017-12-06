@@ -1,5 +1,5 @@
 # page-loader
-Compares two configuration files and shows a difference.
+Utility for download of files from the web.
 
 [![Build Status](https://travis-ci.org/Rabinzon/project-lvl3-s134.svg?branch=master)](https://travis-ci.org/Rabinzon/project-lvl3-s134)
 ### Usige

@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`#PageLoader should throw 'not exist folder' error  1`] = `"<h1> example page </h1>"`;
+
+exports[`#PageLoader should write to file 1`] = `"<h1> example page </h1>"`;

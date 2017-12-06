@@ -1,6 +1,7 @@
 import axios from 'axios';
 import fs from 'mz/fs';
 import path from 'path';
+import 'babel-polyfill';
 
 const getPage = async (url) => {
   const { data } = await axios.get(url);
@@ -13,9 +14,8 @@ const getFileName = (url) => {
 };
 
 export default async (url, outputPath) => {
-  if (!await fs.exists(outputPath)) {
-    console.log(`${outputPath} directory does not exist`);
-    return;
+  if (outputPath && !await fs.exists(outputPath)) {
+    throw new Error(`${outputPath} directory does not exist`);
   }
 
   const fileName = getFileName(url);
