@@ -2,6 +2,13 @@ language: node_js
 node_js:
   - stable
 
+sudo: required
+dist: precise
+
+cache:
+  directories:
+  - node_modules
+
 script: make lint test
 
 deploy:
