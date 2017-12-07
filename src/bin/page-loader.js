@@ -9,10 +9,9 @@ program
   .description('Utility for download of files from the web.')
   .option('-o, --output [path]', 'Output path')
   .action((url, options) => {
-    console.log(url);
     if (!url) {
       program.help();
     }
-    console.log(pageLoader(url, options.format));
+    pageLoader(url, options.output);
   })
   .parse(process.argv);

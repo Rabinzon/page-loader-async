@@ -15,7 +15,8 @@
     "lint-staged": "lint-staged",
     "release": "standard-version",
     "prepublish": "npm run build",
-    "test": "jest"
+    "test": "jest -u",
+    "coverage": "jest --coverage"
   },
   "jest": {
     "testEnvironment": "node"
@@ -57,6 +58,10 @@
   "precommit.silent": true,
   "pre-commit": "lint-staged",
   "dependencies": {
-    "commander": "^2.11.0"
+    "axios": "^0.17.1",
+    "babel-polyfill": "^6.26.0",
+    "commander": "^2.11.0",
+    "mz": "^2.7.0",
+    "nock": "^9.1.4"
   }
 }

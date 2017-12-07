@@ -15,3 +15,6 @@ lint:
 
 publish:
 	npm publish
+
+coverage:
+	npm run coverage
