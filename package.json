@@ -15,7 +15,8 @@
     "lint-staged": "lint-staged",
     "release": "standard-version",
     "prepublish": "npm run build",
-    "test": "jest -u"
+    "test": "jest -u",
+    "coverage": "jest --coverage"
   },
   "jest": {
     "testEnvironment": "node"
