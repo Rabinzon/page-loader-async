@@ -3,26 +3,31 @@ import fs from 'mz/fs';
 import path from 'path';
 import 'babel-polyfill';
 
-const getPage = async (url) => {
-  const { data } = await axios.get(url);
-  return data;
-};
+const getPage = url =>
+  axios.get(url).then(({ data }) => data);
 
 const getFileName = (url) => {
   const fileName = url.replace(/^.+:\/\//, '').replace(/\W/gi, '-');
   return `${fileName}.html`;
 };
 
-export default async (url, outputPath) => {
-  if (outputPath && !await fs.exists(outputPath)) {
-    throw new Error(`${outputPath} directory does not exist`);
-  }
-
+const loadPage = ({ url, outputPath }) => {
   const fileName = getFileName(url);
   const currentDir = path.resolve('./', fileName);
   const outputDir = outputPath ? path.resolve(outputPath, fileName) : currentDir;
-  const page = await getPage(url);
-  console.log(`✔ ${url}\n`);
-  await fs.writeFile(outputDir, page);
-  console.log(`Page was downloaded as '${fileName}'`);
+  return getPage(url)
+    .then((page) => {
+      console.log(`✔ ${url}\n`);
+      return fs.writeFile(outputDir, page);
+    })
+    .then(() => console.log(`Page was downloaded as '${fileName}'`));
 };
+
+export default (url, outputPath) =>
+  fs.exists(outputPath).then((exists) => {
+    if (outputPath && !exists) {
+      return Promise.reject(new Error(`${outputPath} directory does not exist`));
+    }
+    return { url, outputPath };
+  })
+    .then(loadPage);
