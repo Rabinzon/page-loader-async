@@ -11,7 +11,6 @@ const tmpDir = os.tmpdir();
 
 beforeEach(() => {
   const host = 'http://localhost';
-  axios.defaults.host = host;
   axios.defaults.adapter = httpAdapter;
   nock(host)
     .get('example.com/test')
@@ -48,14 +47,3 @@ test('#PageLoader should throw request error', async () => {
     expect(e.toString()).toEqual('Error: Request failed with status code 404');
   }
 });
-
-test('#PageLoader should show logs', async () => {
-  global.console = {
-    log: jest.fn(),
-  };
-
-  await pageLoader('example.com/test', tmpDir);
-  expect(global.console.log).toHaveBeenCalledWith('✔ example.com/test\n');
-  expect(global.console.log).toHaveBeenCalledWith('Page was downloaded as \'example-com-test.html\'');
-});
-
