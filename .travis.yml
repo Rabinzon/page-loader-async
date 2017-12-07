@@ -7,14 +7,12 @@ node_js:
   - stable
 
 sudo: required
-dist: precise
 
 cache:
   directories:
   - node_modules
 
 before_script:
-  - sudo chown -R travis:travis $TMPDIR
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
