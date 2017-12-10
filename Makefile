@@ -4,8 +4,11 @@ install:
 start:
 	npm run babel-node -- src/bin/page-loader ${args}
 
+debug:
+	DEBUG="page-loader:*" npm run babel-node -- src/bin/page-loader --output ./tmp https://ru.hexlet.io
+
 watch-tests:
-	npm run test -- --watch
+	DEBUG="page-loader:*" npm run test -- --watch
 
 test:
 	npm run test
