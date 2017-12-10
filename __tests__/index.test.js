@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 import fs from 'fs';
 import os from 'os';
 import nock from 'nock';
