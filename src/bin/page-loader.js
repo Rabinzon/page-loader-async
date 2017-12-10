@@ -12,6 +12,7 @@ program
     if (!url) {
       program.help();
     }
-    pageLoader(url, options.output);
+    pageLoader(url, options.output)
+      .then(Page => console.log(`Page was downloaded as '${Page.fileName}'`));
   })
   .parse(process.argv);
