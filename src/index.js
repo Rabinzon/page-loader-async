@@ -1,70 +1,72 @@
 import axios from 'axios';
 import fs from 'mz/fs';
 import debug from 'debug';
-import createPageType from './types/Page';
-import createResourceType from './types/Resource';
+import path from 'path';
+import process from 'process';
+import Url from 'url';
+import cheerio from 'cheerio';
 
-const debugLoader = debug('page-loader:loader');
 const debugFetch = debug('page-loader:fetch');
 const debugWriteFile = debug('page-loader:writeFile');
 
-const fetch = (url, params = {}) => {
-  debugFetch('GET', url, params);
-  return axios.get(url, params)
-    .then(({ data, status }) => {
-      debugFetch('STATUS', url, status);
-      return data;
-    }).catch(error =>
-      Promise.reject(`GET ${url} ${error.message}`));
-}
-  ;
-
-const loadResources = (Page) => {
-  const promises = Page.resources
-    .map(({ attribs: { src } }) =>
-      fetch(src, { responseType: 'arraybuffer' })
-        .then(file => createResourceType(src, file)));
-
-  return Promise.all(promises)
-    .then(files => Page.setResources(files));
+const getFileName = (src) => {
+  const { host, pathname } = Url.parse(src);
+  const fileName = `${host || ''}${pathname}`.replace(/\.[a-z]+$/g, '').replace(/\W/gi, '-');
+  const ext = path.extname(pathname);
+  return ext ? `${fileName}${ext}` : fileName;
 };
 
-const writeToFile = (Page) => {
-  const { outputDir, filesDir, html } = Page;
+const fetch = (url, params = {}) =>
+  axios.get(url, params)
+    .then(({ data, status }) => {
+      debugFetch('GET', url, status);
+      return data;
+    })
+    .catch(error => Promise.reject(new Error(`GET ${url} ${error.message}`)));
+
+const loadResources = (html) => {
+  const $ = cheerio.load(html);
+  const resourceTags = ['link', 'script', 'img'];
+  const htmlTags = [...$(resourceTags.map(tag => `${tag}[src]`).toString())];
+
+  const fetchResource = src =>
+    fetch(src, { responseType: 'arraybuffer' })
+      .then(file => ({ src, file, newName: getFileName(src) }));
+
+  return Promise.all(htmlTags
+    .map(tag => fetchResource(tag.attribs.src)))
+    .then(files => ({ html, files }));
+};
+
+const writeToFile = ({ html, files }, url, outputPath) => {
+  const $ = cheerio.load(html);
+  const pageFileName = getFileName(url);
+  const outputDir = path.resolve(outputPath, `${pageFileName}.html`);
+  const filesDir = path.resolve(outputPath, `${pageFileName}_files`);
+
+  files.forEach(({ src, newName }) =>
+    $(`[src='${src}']`).attr('src', `${pageFileName}_files/${newName}`));
+
   debugWriteFile('output path:', outputDir);
-  debugWriteFile('writing files to:', filesDir);
+
   return fs.exists(filesDir)
     .then(exists => (exists ? filesDir : fs.mkdir(filesDir)))
-    .catch(err => Promise.reject(err.message))
+    .then(() => fs.writeFile(outputDir, $.html()))
     .then(() =>
-      Promise.all([
-        fs.writeFile(outputDir, html)
-          .catch(err => Promise.reject(err.message)),
-        ...Page.resources.map(resource => resource.writeToFile(filesDir)),
-      ]))
-
-    .then(() => Page);
+      Promise.all(files.map(({ file, newName }) => {
+        debugWriteFile('writing files to:', filesDir);
+        return fs.writeFile(path.resolve(filesDir, newName), file, 'binary');
+      })))
+    .then(() => `${pageFileName}.html`)
+    .catch(err => Promise.reject(new Error(err.message)));
 };
 
-const loadPage = ({ url, outputPath = false }) => {
-  debugLoader('loading page from', url);
-  return fetch(url)
-    .then(html => createPageType(html, url, outputPath))
-    .then(loadResources)
-    .then(Page => Page.replaceSrcAttribute())
-    .then(writeToFile);
-};
-
-export default (url, outputPath = false) => {
-  if (!outputPath) {
-    return loadPage({ url });
-  }
-
-  return fs.exists(outputPath).then((exists) => {
-    if (outputPath && !exists) {
+export default (url, outputPath = process.pwd()) =>
+  fs.exists(outputPath).then((exists) => {
+    if (!exists) {
       return Promise.reject(new Error(`${outputPath} directory does not exist`));
     }
-    return { url, outputPath };
-  })
-    .then(loadPage);
-};
+    return fetch(url)
+      .then(loadResources)
+      .then(page => writeToFile(page, url, outputPath));
+  });

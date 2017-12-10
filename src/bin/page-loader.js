@@ -13,9 +13,9 @@ program
     if (!url) {
       program.help();
     }
-    pageLoader(url, options.output)
-      .then((Page) => {
-        console.log(`Page was downloaded as '${Page.fileName}'`);
+    pageLoader(url, options.ouatput)
+      .then((fileName) => {
+        console.log(`Page was downloaded as '${fileName}'`);
         process.exit(0);
       })
       .catch((err) => {

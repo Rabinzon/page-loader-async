@@ -3,16 +3,21 @@ import os from 'os';
 import nock from 'nock';
 import axios from 'axios';
 import path from 'path';
+import rimraf from 'rimraf';
 import httpAdapter from 'axios/lib/adapters/http';
 import pageLoader from '../src/';
 
-const tmpDir = os.tmpdir();
-const fixturesDir = '__tests__/__fixtures__/';
-const img = fs.readFileSync(path.resolve(fixturesDir, 'example_img.jpg'));
-const script = fs.readFileSync(path.resolve(fixturesDir, 'script.js.exmaple'));
-const htmlWithResources = fs.readFileSync(path.resolve(fixturesDir, 'html-with-resources.html'));
+let tmpDir = null;
+let fixturesDir = null;
+let img = null;
+let script = null;
+let htmlWithResources = null;
 
-beforeEach(() => {
+beforeAll(() => {
+  fixturesDir = '__tests__/__fixtures__/';
+  img = fs.readFileSync(path.resolve(fixturesDir, 'img.jpg'));
+  script = fs.readFileSync(path.resolve(fixturesDir, 'script.txt'));
+  htmlWithResources = fs.readFileSync(path.resolve(fixturesDir, 'html2.html'));
   const host = 'http://localhost';
   axios.defaults.adapter = httpAdapter;
 
@@ -29,9 +34,13 @@ beforeEach(() => {
     .reply(200, script)
     .get('example.io/resources/img')
     .reply(200, htmlWithResources);
-
-  fs.mkdtempSync(tmpDir);
 });
+
+beforeEach(() => {
+  tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'page-loader'));
+});
+
+afterEach(() => rimraf.sync(tmpDir));
 
 test('#PageLoader should write to file', () =>
   pageLoader('example.com/test', tmpDir).then(() =>
@@ -47,7 +56,7 @@ test('#PageLoader should throw \'not exist folder\' error ', () => {
 
 test('#PageLoader should throw request error', () =>
   pageLoader('example.com/404', tmpDir).catch(e =>
-    expect(e).toEqual('GET example.com/404 Request failed with status code 404')));
+    expect(e.toString()).toEqual('Error: GET example.com/404 Request failed with status code 404')));
 
 test('#PageLoader should load page with resources', () => {
   expect.assertions(3);

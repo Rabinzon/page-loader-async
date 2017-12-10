@@ -21,8 +21,14 @@ exports[`#PageLoader should load page with resources 1`] = `
 
 exports[`#PageLoader should write to file 1`] = `
 
-<h1>
-  example page
-</h1>
+<html>
+  <head>
+  </head>
+  <body>
+    <h1>
+      example page
+    </h1>
+  </body>
+</html>
 
 `;
