@@ -14,7 +14,8 @@ const fetch = (url, params = {}) => {
     .then(({ data, status }) => {
       debugFetch('STATUS', url, status);
       return data;
-    });
+    }).catch(error =>
+      Promise.reject(`GET ${url} ${error.message}`));
 }
   ;
 
@@ -34,9 +35,11 @@ const writeToFile = (Page) => {
   debugWriteFile('writing files to:', filesDir);
   return fs.exists(filesDir)
     .then(exists => (exists ? filesDir : fs.mkdir(filesDir)))
+    .catch(err => Promise.reject(err.message))
     .then(() =>
       Promise.all([
-        fs.writeFile(outputDir, html),
+        fs.writeFile(outputDir, html)
+          .catch(err => Promise.reject(err.message)),
         ...Page.resources.map(resource => resource.writeToFile(filesDir)),
       ]))
 

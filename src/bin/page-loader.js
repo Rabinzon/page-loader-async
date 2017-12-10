@@ -3,6 +3,7 @@ import program from 'commander';
 import process from 'process';
 import pageLoader from '..';
 
+
 program
   .version('0.0.1')
   .arguments('<url>')
@@ -13,6 +14,13 @@ program
       program.help();
     }
     pageLoader(url, options.output)
-      .then(Page => console.log(`Page was downloaded as '${Page.fileName}'`));
+      .then((Page) => {
+        console.log(`Page was downloaded as '${Page.fileName}'`);
+        process.exit(0);
+      })
+      .catch((err) => {
+        console.error('ERROR:', err);
+        process.exit(1);
+      });
   })
   .parse(process.argv);
