@@ -15,7 +15,7 @@
     "lint-staged": "lint-staged",
     "release": "standard-version",
     "prepublish": "npm run build",
-    "test": "jest -u",
+    "test": "jest",
     "coverage": "jest --coverage"
   },
   "jest": {
@@ -59,8 +59,10 @@
   "pre-commit": "lint-staged",
   "dependencies": {
     "axios": "^0.17.1",
-    "babel-polyfill": "^6.26.0",
+    "cheerio": "^1.0.0-rc.2",
     "commander": "^2.11.0",
+    "file-type": "^7.4.0",
+    "is-svg": "^2.1.0",
     "mz": "^2.7.0",
     "nock": "^9.1.4"
   }

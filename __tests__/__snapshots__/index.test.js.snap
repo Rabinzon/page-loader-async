@@ -1,3 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`#PageLoader should load page with resources 1`] = `
+"<html><head>
+    </head>
+    <body>
+        <h1> <img src=\\"example-io-resources-img_files/example-io-img.jpg\\" alt=\\"\\"> example page </h1>
+        <script src=\\"example-io-resources-img_files/example-io-script.js\\"></script>
+    
+</body></html>"
+`;
+
 exports[`#PageLoader should write to file 1`] = `"<h1> example page </h1>"`;

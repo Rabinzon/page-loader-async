@@ -4,21 +4,31 @@ import fs from 'fs';
 import os from 'os';
 import nock from 'nock';
 import axios from 'axios';
+import path from 'path';
 import httpAdapter from 'axios/lib/adapters/http';
 import pageLoader from '../src/';
 
 const tmpDir = os.tmpdir();
+const fixturesDir = '__tests__/__fixtures__/';
+const img = fs.readFileSync(path.resolve(fixturesDir, 'example_img.jpg'));
+const script = fs.readFileSync(path.resolve(fixturesDir, 'script.js.exmaple'));
+const htmlWithResources = fs.readFileSync(path.resolve(fixturesDir, 'html-with-resources.html'));
 
 beforeEach(() => {
   const host = 'http://localhost';
   axios.defaults.adapter = httpAdapter;
-  nock(host)
-    .get('example.com/test')
-    .reply(200, '<h1> example page </h1>');
 
   nock(host)
+    .get('example.com/test')
+    .reply(200, '<h1> example page </h1>')
     .get('example.com/error')
-    .reply(404, '<h1> example page </h1>');
+    .reply(404, '<h1> example page </h1>')
+    .get('example.io/img.jpg')
+    .reply(200, img)
+    .get('example.io/script.js')
+    .reply(200, script)
+    .get('example.io/resources/img')
+    .reply(200, htmlWithResources);
 
   fs.mkdtempSync(tmpDir);
 });
@@ -39,4 +49,16 @@ test('#PageLoader should throw request error', async () => {
   expect.assertions(1);
   return pageLoader('example.com/error', tmpDir).catch(e =>
     expect(e.toString()).toEqual('Error: Request failed with status code 404'));
+});
+
+test('#PageLoader should load page with resources', async () => {
+  expect.assertions(3);
+  return pageLoader('example.io/resources/img', tmpDir).then(() => {
+    const html = fs.readFileSync(`${tmpDir}/example-io-resources-img.html`).toString();
+    const jpg = fs.readFileSync(`${tmpDir}/example-io-resources-img_files/example-io-img.jpg`);
+    const js = fs.readFileSync(`${tmpDir}/example-io-resources-img_files/example-io-script.js`);
+    expect(html).toMatchSnapshot();
+    expect(jpg.toString()).toEqual(img.toString());
+    expect(js.toString()).toEqual(js.toString());
+  });
 });
