@@ -21,8 +21,10 @@ beforeEach(() => {
   nock(host)
     .get('example.com/test')
     .reply(200, '<h1> example page </h1>')
-    .get('example.com/error')
-    .reply(404, '<h1> example page </h1>')
+    .get('example.com/404')
+    .reply(404)
+    .get('example.com/502')
+    .reply(502)
     .get('example.io/img.jpg')
     .reply(200, img)
     .get('example.io/script.js')
@@ -45,13 +47,11 @@ test('#PageLoader should throw \'not exist folder\' error ', () => {
     expect(e.toString()).toEqual('Error: /nw/r3/42 directory does not exist'));
 });
 
-test('#PageLoader should throw request error', async () => {
-  expect.assertions(1);
-  return pageLoader('example.com/error', tmpDir).catch(e =>
-    expect(e.toString()).toEqual('Error: Request failed with status code 404'));
-});
+test('#PageLoader should throw request error', () =>
+  pageLoader('example.com/404', tmpDir).catch(e =>
+    expect(e).toEqual('GET example.com/404 Request failed with status code 404')));
 
-test('#PageLoader should load page with resources', async () => {
+test('#PageLoader should load page with resources', () => {
   expect.assertions(3);
   return pageLoader('example.io/resources/img', tmpDir).then(() => {
     const html = fs.readFileSync(`${tmpDir}/example-io-resources-img.html`).toString();

@@ -17,7 +17,8 @@ const createResource = (src, file) => ({
       .then(() => {
         degugWriteResourceFile('file written:', name);
         return this;
-      });
+      })
+      .catch(err => Promise.reject(err.message));
   },
 });
 
