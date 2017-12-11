@@ -49,7 +49,8 @@ const loadResources = (url, outputPath) => (html) => {
             }),
         }
       )), { concurrent: true }).run())
-    .then(() => $.html());
+    .then(() => $.html())
+    .catch(err => Promise.reject(new Error(err.message)));
 };
 
 export default (url, outputPath = process.cwd()) =>
