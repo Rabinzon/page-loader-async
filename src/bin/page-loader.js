@@ -13,7 +13,7 @@ program
     if (!url) {
       program.help();
     }
-    pageLoader(url, options.ouatput)
+    pageLoader(url, options.output)
       .then((fileName) => {
         console.log(`Page was downloaded as '${fileName}'`);
         process.exit(0);
