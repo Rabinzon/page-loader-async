@@ -28,7 +28,7 @@ const fetch = (url, params = {}) =>
 
 const loadResources = (url, outputPath) => (html) => {
   const $ = cheerio.load(html);
-  const htmlTags = [...$('link[src], script[src], img[src]')];
+  const htmlTags = [...$('link[href], script[src], img[src]')];
   const filesDirName = `${getFileName(url)}_files`;
   const filesDirPath = path.resolve(outputPath, filesDirName);
 
@@ -39,16 +39,18 @@ const loadResources = (url, outputPath) => (html) => {
   return fs.exists(filesDirPath)
     .then(exists => (exists ? filesDirPath : fs.mkdir(filesDirPath)))
     .then(() => new Listr(htmlTags
-      .map(({ attribs: { src } }) => (
-        { title: src,
+      .map(({ attribs }) => {
+        const src = attribs.src || attribs.href;
+        return { title: (src),
           task: () => fetchResource(src)
             .then(({ newName, file }) => fs.writeFile(path.resolve(filesDirPath, newName), file, 'binary'))
             .then(() => {
               debugWriteFile('recourse saved:', getFileName(src));
               $(`[src='${src}']`).attr('src', `${filesDirName}/${getFileName(src)}`);
+              $(`[href='${src}']`).attr('href', `${filesDirName}/${getFileName(src)}`);
             }),
-        }
-      )), { concurrent: true }).run())
+        };
+      }), { concurrent: true }).run())
     .then(() => $.html())
     .catch(err => Promise.reject(new Error(err.message)));
 };
