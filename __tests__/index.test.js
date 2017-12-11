@@ -7,11 +7,11 @@ import rimraf from 'rimraf';
 import httpAdapter from 'axios/lib/adapters/http';
 import pageLoader from '../src/';
 
-let tmpDir = null;
-let fixturesDir = null;
-let img = null;
-let script = null;
-let htmlWithResources = null;
+let tmpDir;
+let fixturesDir;
+let img;
+let script;
+let htmlWithResources;
 
 beforeAll(() => {
   fixturesDir = '__tests__/__fixtures__/';
