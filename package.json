@@ -26,7 +26,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Rabinzon/project-lvl3-s134.git"
+    "url": "git+https://github.com/Rabinzon/page-loader.git"
   },
   "keywords": [
     "js",
@@ -39,9 +39,9 @@
   "author": "Ildar Gilfanov",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Rabinzon/project-lvl3-s134/issues"
+    "url": "https://github.com/Rabinzon/page-loader/issues"
   },
-  "homepage": "https://github.com/Rabinzon/project-lvl3-s134#readme",
+  "homepage": "https://github.com/Rabinzon/page-loader#readme",
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
