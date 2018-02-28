@@ -1,13 +1,13 @@
 # page-loader-async
 Utility for download of files from the web.
 
-[![Build Status](https://travis-ci.org/Rabinzon/page-loader-async.svg?branch=master)](https://travis-ci.org/Rabinzon/page-loader)
-[![Maintainability](https://api.codeclimate.com/v1/badges/d9cb0a9e700097d2898b/maintainability)](https://codeclimate.com/github/Rabinzon/page-loader/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/d9cb0a9e700097d2898b/test_coverage)](https://codeclimate.com/github/Rabinzon/page-loader/test_coverage)
+[![Build Status](https://travis-ci.org/Rabinzon/page-loader-async.svg?branch=master)](https://travis-ci.org/Rabinzon/page-loader-async)
+[![Maintainability](https://api.codeclimate.com/v1/badges/dcfc5ea51500f652e3f8/maintainability)](https://codeclimate.com/github/Rabinzon/page-loader-async/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/dcfc5ea51500f652e3f8/test_coverage)](https://codeclimate.com/github/Rabinzon/page-loader-async/test_coverage)
 ### Usige
 ```sh
 $ npm i -g page-loader-async
-$ page-loader [options] <url>
+$ page-loader-async [options] <url>
 ```
 
 ### Options

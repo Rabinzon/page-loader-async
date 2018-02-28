@@ -1,6 +1,6 @@
 {
   "name": "page-loader-async",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Utility for download of files from the web.",
   "main": "dist/index.js",
   "bin": {
